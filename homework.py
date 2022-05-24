@@ -8,6 +8,7 @@ from telegram import Bot
 from dotenv import load_dotenv
 
 from exeptions import ExceptionVariablesEnvironment
+from typing import Union, Dict, List
 
 load_dotenv()
 
@@ -26,12 +27,12 @@ HOMEWORK_STATUSES = {
 }
 
 
-def send_message(bot, message):
+def send_message(bot: Bot, message: str):
     """Отправляет сообщение в Telegram чат."""
     return bot.send_message(TELEGRAM_CHAT_ID, message)
 
 
-def get_api_answer(current_timestamp):
+def get_api_answer(current_timestamp: int) -> Dict[str, List[Union[int, str]]]:
     """
     Делает запрос к единственному эндпоинту API-сервиса.
     Возвращает ответ API
@@ -40,6 +41,7 @@ def get_api_answer(current_timestamp):
     params = {'from_date': timestamp}
     response = requests.get(ENDPOINT, headers=HEADERS, params=params)
     if response.status_code == HTTPStatus.OK:
+        print(response.json())
         return response.json()
 
 
