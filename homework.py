@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 from exeptions import ExceptionVariablesEnvironment
 from typing import Union, Dict, List
 
+from logger import logger
+
 load_dotenv()
 
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
@@ -25,27 +27,31 @@ HOMEWORK_STATUSES = {
     'reviewing': 'Работа взята на проверку ревьюером.',
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
 }
+CustomDict = Dict[str, Union[List[Dict[str, Union[int, str]]], int]]
+CustomList = List[Dict[str, Union[str, int]]]
 
 
 def send_message(bot: Bot, message: str):
     """Отправляет сообщение в Telegram чат."""
+    logger.info('Сообщение отправлено!')
     return bot.send_message(TELEGRAM_CHAT_ID, message)
 
 
-def get_api_answer(current_timestamp: int) -> Dict[str, List[Union[int, str]]]:
+def get_api_answer(current_timestamp: int) -> CustomDict:
     """
     Делает запрос к единственному эндпоинту API-сервиса.
     Возвращает ответ API
     """
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
-    response = requests.get(ENDPOINT, headers=HEADERS, params=params)
-    if response.status_code == HTTPStatus.OK:
-        print(response.json())
-        return response.json()
+    try:
+        response = requests.get(ENDPOINT, headers=HEADERS, params=params)
+    except Exception as error:
+        logger.error(f'недоступность эндпоинта ')
+    return response.json()
 
 
-def check_response(response) -> list:
+def check_response(response: CustomDict) -> CustomList:
     """
     Проверяет ответ API на корректность.
     Возввращает список домашних работ.
@@ -54,7 +60,7 @@ def check_response(response) -> list:
         return response.get('homeworks')
 
 
-def parse_status(homework):
+def parse_status(homework: CustomList) -> str:
     """
     Извлекает из информации о конкретной домашней
     работе статус этой работы. Возвращает подготовленную
@@ -64,23 +70,26 @@ def parse_status(homework):
         homework_name = homework[0].get('homework_name')
         homework_status = homework[0].get('status')
         verdict = HOMEWORK_STATUSES[homework_status]
-        return f'Изменился статус проверки работы "{homework_name}". {verdict}'
+        return f'''Изменился статус проверки работы 
+            "{homework_name}". {verdict}'''
     else:
         return 'Работа еще не загружена'
 
 
-def check_tokens():
+def check_tokens() -> bool:
     """Проверяет доступность переменных окружения."""
-    SECRET_DATA = [PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID]
+    SECRET_DATA = [PRACTICUM_TOKEN, TELEGRAM_TOKEN, None]
     return all(SECRET_DATA)
 
 
 def main():
     """Основная логика работы бота."""
+
     if not check_tokens():
         raise ExceptionVariablesEnvironment(
             'Проверьте переменное окружение!'
         )
+        logger.critical('Проверьте переменное окружение!')
     bot = Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
 
