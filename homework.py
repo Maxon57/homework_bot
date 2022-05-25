@@ -35,8 +35,8 @@ CustomList = List[Dict[str, Union[str, int]]]
 
 def send_message(message: str) -> telegram.Bot.send_message:
     """Отправляет сообщение в Telegram чат."""
+    logger.info('Сообщение отправлено!')
     return bot.send_message(TELEGRAM_CHAT_ID, message)
-
 
 def send_error_message(message_err: str) -> None:
     """Отправялет сообщения в логи и в Telegram."""
@@ -44,7 +44,6 @@ def send_error_message(message_err: str) -> None:
     logger.info(f'''Информация о текущем состоянии
                 отправлено боту: {bot.first_name}''')
     send_message(message_err)
-
 
 def get_api_answer(current_timestamp: int) -> CustomDict:
     """
@@ -82,7 +81,6 @@ def get_api_answer(current_timestamp: int) -> CustomDict:
 
     return valid_response.json()
 
-
 def check_response(response: CustomDict) -> CustomList:
     """
     Проверяет ответ API на корректность.
@@ -112,21 +110,22 @@ def parse_status(homework: CustomList) -> str:
                 'получен неизвестный статус.')
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
-
 def check_tokens() -> bool:
     """Проверяет доступность переменных окружения."""
-    SECRET_DATA = [PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID]
+    SECRET_DATA = [PRACTICUM_TOKEN, TELEGRAM_TOKEN, None]
     return all(SECRET_DATA)
 
 
 def main() -> None:
     """Основная логика работы бота."""
+
     if not check_tokens():
         logger.critical(f'''Отсутсвует(ют) переменная(ые) окружения.
                    Программа принудительно остановлена''')
         raise ExceptionVariablesEnvironment(
             'Проверьте переменные окружение!'
         )
+
 
     current_timestamp = int(time.time())
 
