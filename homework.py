@@ -10,15 +10,15 @@ from emoji import emojize as emoji
 from telegram import Bot
 
 from exeptions import ExceptionVariablesEnvironment
-from logger import logger
-
+import logging
+from logging.handlers import RotatingFileHandler
 load_dotenv()
 
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-RETRY_TIME = 600
+RETRY_TIME = 5
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
 
@@ -39,6 +39,23 @@ CustomList = Union[
     Dict[str, Union[str, int]]
 ]
 
+logger = logging.getLogger('homework')
+logger.setLevel(logging.DEBUG)
+FORMAT = '%(asctime)s :: %(name)s:%(lineno)s :: %(levelname)s :: %(message)s'
+handler = RotatingFileHandler(filename='my_logger.log',
+                              maxBytes=5000000,
+                              backupCount=5,
+                              encoding='utf-8'
+                              )
+handler.setFormatter(logging.Formatter(FORMAT))
+handler.setLevel(logging.DEBUG)
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(logging.Formatter(FORMAT))
+stream_handler.setLevel(logging.INFO)
+logger.addHandler(handler)
+logger.addHandler(stream_handler)
+logger.debug('Приложение бот-ассистент стартовало')
+
 
 def send_message(bot: Bot, message: str) -> telegram.Bot.send_message:
     """Отправляет сообщение в Telegram чат."""
@@ -46,11 +63,11 @@ def send_message(bot: Bot, message: str) -> telegram.Bot.send_message:
 
 
 def send_error_message(message_err: str) -> None:
-    """Отправялет сообщения в логи и в Telegram."""
+    """Отправялет ERROR сообщения в логи и в Telegram."""
     logger.error(message_err)
     logger.info(f'''Информация о текущем состоянии
                 отправлено боту.''')
-    send_message(emoji(f':warning: {message_err}'))
+    send_message(main.__dict__['bot'], emoji(f':warning: {message_err}'))
 
 
 def get_api_answer(current_timestamp: int) -> CustomDict:
@@ -133,6 +150,7 @@ def main() -> None:
             'Проверьте переменные окружение!'
         )
     bot = Bot(token=TELEGRAM_TOKEN)
+    main.bot = bot
     current_timestamp = int(time.time())
     while True:
         try:
@@ -145,7 +163,7 @@ def main() -> None:
             if isinstance(list_homeworks, list) and list_homeworks:
                 string_response = parse_status(list_homeworks[0])
                 logger.info('Бот отправил текущий статус домашки.')
-                send_message(string_response)
+                send_message(bot, string_response)
             time.sleep(RETRY_TIME)
             last_timestapm = response['current_date']
             if last_timestapm:
@@ -156,7 +174,7 @@ def main() -> None:
             time.sleep(RETRY_TIME)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
-            send_message(message)
+            send_message(bot, message)
             time.sleep(RETRY_TIME)
 
 
