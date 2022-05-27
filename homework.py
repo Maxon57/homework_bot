@@ -111,7 +111,10 @@ def check_response(response: CustomDict) -> CustomList:
     Проверяет ответ API на корректность.
     Возвращает список домашних работ.
     """
-    if not response.get('homework'):
+    if not response:
+        message_err = 'От сервера не пришло данных. Пустой словарь!'
+        send_error_message(message_err)
+    if not bool(response.get('homework')):
         message_err = 'В словаре homeworks пустой список.'
         send_error_message(message_err)
     return response.get('homeworks')
@@ -132,7 +135,7 @@ def parse_status(homework: CustomList) -> str:
         send_error_message(message_err)
         return (f'На запрос статуса работы "{homework_name}" '
                 'получен неизвестный статус.')
-    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+    return verdict
 
 
 def check_tokens() -> bool:
@@ -151,7 +154,7 @@ def main() -> None:
         )
     bot = Bot(token=TELEGRAM_TOKEN)
     main.bot = bot
-    current_timestamp = int(time.time())
+    current_timestamp = 1651758808
     while True:
         try:
             response = get_api_answer(current_timestamp)
