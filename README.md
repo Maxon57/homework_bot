@@ -18,7 +18,7 @@ pip install -r requirements.txt
 - создайте бота в telegram(см. официальную документацию) и 
 получите token,
 - узнайте свой chat_id,
-- создайте файл .env и занесите данные вашего chat_id и token
+- создайте файл .env и занесите данные вашего chat_id, token и practicum_token
 для переменного окружения (пример в файле .env.example)
 
 **Авторы**
