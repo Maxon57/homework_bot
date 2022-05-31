@@ -1,15 +1,17 @@
+import logging
 import os
 import time
 from http import HTTPStatus
-from typing import Dict, List, Union
+from logging.handlers import RotatingFileHandler
 
 import requests
+import telegram
 from dotenv import load_dotenv
 from telegram import Bot
 
 from exeptions import BotException
-import logging
-from logging.handlers import RotatingFileHandler
+from settings import (ENDPOINT, HOMEWORK_STATUSES, RETRY_TIME, CustomDict,
+                      CustomList)
 
 load_dotenv()
 
@@ -17,21 +19,10 @@ PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-RETRY_TIME = 600
-ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
-HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
 
-HOMEWORK_STATUSES = {
-    'approved': 'Работа проверена: ревьюеру всё понравилось. Ура!',
-    'reviewing': 'Работа взята на проверку ревьюером.',
-    'rejected': 'Работа проверена: у ревьюера есть замечания.'
-}
+HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
 CACHE = {}
-CustomDict = Dict[str, Union[List[Dict[str, Union[int, str]]], int]]
-CustomList = Union[
-    List[Dict[str, Union[str, int]]],
-    Dict[str, Union[str, int]]
-]
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 FORMAT = '%(asctime)s :: %(name)s:%(lineno)s :: %(levelname)s :: %(message)s'
@@ -52,8 +43,12 @@ logger.debug('Приложение бот-ассистент стартовал�
 
 def send_message(bot: Bot, message: str) -> Bot.send_message:
     """Отправляет сообщение в Telegram чат."""
-    logger.info('Информация о текущем состоянии отправлено боту.')
-    return bot.send_message(TELEGRAM_CHAT_ID, message)
+    try:
+        send_mess = bot.send_message(TELEGRAM_CHAT_ID, message)
+        logger.info('Информация о текущем состоянии отправлено боту.')
+    except telegram.TelegramError:
+        raise BotException('Ошибка отправки сообщения в Telegram!')
+    return send_mess
 
 
 def get_api_answer(current_timestamp: int) -> CustomDict:
