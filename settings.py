@@ -14,4 +14,3 @@ CustomList = Union[
     List[Dict[str, Union[str, int]]],
     Dict[str, Union[str, int]]
 ]
-
