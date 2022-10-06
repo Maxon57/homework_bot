@@ -15,13 +15,14 @@
 
 </details>
 
-***
+*** 
 <details>
     <summary style="font-size: 16pt; font-weight: bold">Создание бота в Telegram</summary>
-- создайте бота в telegram([см. официальную документацию](https://core.telegram.org/bots)) и 
-получите token,
-- узнайте свой chat_id,
-- создайте файл .env и занесите данные вашего chat_id, token и practicum_token
+
+* создайте бота в telegram ([см. официальную документацию](https://core.telegram.org/bots)) и 
+получите token, 
+* узнайте свой chat_id, 
+* *создайте файл .env и занесите данные вашего chat_id, token и practicum_token
 для переменного окружения (пример в файле .env.example)
 </details>
 
@@ -29,6 +30,7 @@
 <details>
     <summary style="font-size: 16pt; font-weight: bold">Запуск проекта</summary>
   Клонировать репозиторий и перейти в него в командной строке:
+
 ```
 git clone https://github.com/Maxon57/homework_bot.git
 ```
@@ -55,6 +57,7 @@ python3 homewok.py runserver
 ***
 <details>
     <summary style="font-size: 16pt; font-weight: bold">Авторы</summary>
+
   * [Максим Игнатов](https://github.com/Maxon57)
 </details>
 
