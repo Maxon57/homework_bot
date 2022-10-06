@@ -9,10 +9,10 @@
 ***
 <details>
     <summary style="font-size: 16pt; font-weight: bold">Технологии</summary>
-```
-Python 3.7
-Python-telegram-bot 13.7
-```
+
+* Python 3.7
+* Python-telegram-bot 13.7
+
 </details>
 
 ***
