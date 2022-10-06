@@ -1,23 +1,34 @@
 # homework_bot
-**Описание**
-
-Бот делает запрос к API сервиса Яндекс.Практикум 
+***
+<details>
+    <summary style="font-size: 16pt; font-weight: bold">Описание</summary>
+  Бот делает запрос к API сервиса Яндекс.Практикум 
 для получения информации о текущем статусе домашней работы.
+</details>
 
-**Технологии**
-
+***
+<details>
+    <summary style="font-size: 16pt; font-weight: bold">Технологии</summary>
+```
 Python 3.7
 Python-telegram-bot 13.7
+```
+</details>
 
-**Создание бота в Telegram**
+***
+<details>
+    <summary style="font-size: 16pt; font-weight: bold">Создание бота в Telegram</summary>
 - создайте бота в telegram([см. официальную документацию](https://core.telegram.org/bots)) и 
 получите token,
 - узнайте свой chat_id,
 - создайте файл .env и занесите данные вашего chat_id, token и practicum_token
 для переменного окружения (пример в файле .env.example)
+</details>
 
-**Запуск проекта в dev-режиме**
-Клонировать репозиторий и перейти в него в командной строке:
+****
+<details>
+    <summary style="font-size: 16pt; font-weight: bold">Запуск проекта</summary>
+  Клонировать репозиторий и перейти в него в командной строке:
 ```
 git clone https://github.com/Maxon57/homework_bot.git
 ```
@@ -39,7 +50,13 @@ pip install -r requirements.txt
 ```
 python3 homewok.py runserver
 ```
+</details>
 
-**Авторы**
+***
+<details>
+    <summary style="font-size: 16pt; font-weight: bold">Авторы</summary>
+  * [Максим Игнатов](https://github.com/Maxon57)
+</details>
 
-* [Максим Игнатов](https://github.com/Maxon57)
+
+
